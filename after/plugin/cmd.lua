@@ -1,29 +1,27 @@
 local cmd = vim.api.nvim_create_user_command
+local format = function()
+  vim.lsp.buf.format { async = true }
+end
 
--- command
-cmd('De', 'cd ~/', {})
-cmd('Dc', 'cd ~/.myconfig', {})
--- cd now",{})
-cmd('Cdn', 'cd %:p:h', {})
--- cd before dir now",{})
-cmd('Cb', 'cd ..', {})
--- close all buffer without current",{})
-cmd('Bda', '%bdelete|edit#|bdelete#', {})
--- cd git root",{})
-cmd('Cdg', "exec 'cd' fnameescape(fnamemodify(finddir('.git', escape(expand('%:p:h'), ' ') . ';'), ':h'))", {})
--- variable git",{})
-cmd('LetGit', "let DIRGIT=fnameescape(fnamemodify(finddir('.git', escape(expand('%:p:h'), ' ') . ';'), ':h'))", {})
--- vim plug go to",{})
-cmd('Gplugvim', 'call Goplugvim()', {})
-cmd('Help', "exe 'tabnew '.nvimplug.'/nvim-conf/help/home.md'", {})
--- plugin on wiki",{})
-cmd('W1', 'e ~/wiki/development/index.wiki', {})
-cmd('Cmdh', function()
-  local CURRENT_HEIGHT = vim.api.nvim_command_output('set cmdheight'):gsub('.*=', '')
-  local IsZero = CURRENT_HEIGHT == '0'
-  if IsZero then
-    vim.cmd 'set cmdheight=1'
-  else
-    vim.cmd 'set cmdheight=0'
-  end
+vim.api.nvim_create_user_command('Format', format, {})
+-- cmd
+cmd('LspDiagnosticOpenFloat', vim.diagnostic.open_float, {})
+cmd('LspDiagnosticPrev', vim.diagnostic.goto_prev, {})
+cmd('LspDecDiagnosticNext', vim.diagnostic.goto_next, {})
+cmd('LspDecDiagnosticList', vim.diagnostic.setloclist, {})
+cmd('LspBufDec', vim.lsp.buf.declaration, {})
+cmd('LspBufHelp', vim.lsp.buf.signature_help, {})
+cmd('LspBufAddFolder', vim.lsp.buf.add_workspace_folder, {})
+cmd('LspBufRmFolder', vim.lsp.buf.remove_workspace_folder, {})
+cmd('LspBufListFolder', function()
+  print(vim.inspect(vim.lsp.buf.list_workspace_folders()))
+end, {})
+cmd('LspBufDef', vim.lsp.buf.type_definition, {})
+cmd('LspBufRename', vim.lsp.buf.rename, {})
+cmd('LspBufCodeAction', vim.lsp.buf.code_action, {})
+cmd('LspInstallServer', function()
+  _G.LspInstallServer { termux = false }
+end, {})
+cmd('LspInstallServerTermux', function()
+  _G.LspInstallServer { termux = true }
 end, {})
